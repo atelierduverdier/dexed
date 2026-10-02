@@ -101,6 +101,8 @@ public:
     void setValue(int value);
     int getValue();
     int getOffset();
+    /** maximum DX7 value of this controller (the host value is value/steps) */
+    int getSteps() const { return steps; }
     String getValueDisplay();
     
     void sliderValueChanged (Slider* moved);

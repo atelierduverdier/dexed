@@ -42,6 +42,7 @@ include_directories(../libs/MTS-ESP/Client)
 target_sources(${BaseTargetName} PRIVATE
 	AlgoDisplay.cpp
 	CartManager.cpp
+	DexedOsc.cpp
 	DXComponents.cpp
 	DXLookNFeel.cpp
 	EngineMkI.cpp
@@ -107,6 +108,7 @@ PRIVATE
     juce::juce_graphics
     juce::juce_gui_basics
     juce::juce_gui_extra
+    juce::juce_osc
     surgesynthteam_tuningui
     tuning-library
     DexedResources

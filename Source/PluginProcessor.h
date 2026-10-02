@@ -38,6 +38,8 @@
 #include "EngineMkI.h"
 #include "EngineOpl.h"
 
+class DexedOscServer;
+
 struct ProcessorVoice {
     int channel;
     int midi_note;
@@ -177,6 +179,13 @@ public :
     std::unique_ptr<Ctrl> monoModeCtrl;
 
     void loadCartridge(Cartridge &cart);
+    /**
+     * Set by the OSC offline renderer before constructing a private engine:
+     * skips user preferences (MIDI ports, sysex output) and the OSC server.
+     */
+    static inline thread_local bool constructOffline = false;
+    /** OSC remote control (Atelier du Verdier); null for offline engines or when disabled */
+    std::unique_ptr<DexedOscServer> oscServer;
     void setDxValue(int offset, int v);
 
     //==============================================================================

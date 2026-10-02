@@ -22,6 +22,7 @@
 #include <bitset>
 
 #include "PluginProcessor.h"
+#include "DexedOsc.h"
 #include "PluginEditor.h"
 
 #include "Dexed.h"
@@ -107,7 +108,8 @@ DexedAudioProcessor::DexedAudioProcessor()
     controllers.values_[kControllerPitchStep] = 0;
     controllers.masterTune = 0;
     
-    loadPreference();
+    if ( ! constructOffline )
+        loadPreference();
 
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         voices[note].dx7_note = NULL;
@@ -118,9 +120,13 @@ DexedAudioProcessor::DexedAudioProcessor()
     
     mtsClient = NULL;
     mtsClient = MTS_RegisterClient();
+
+    if ( ! constructOffline )
+        oscServer.reset(new DexedOscServer(*this));
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {
+    oscServer.reset();
     Logger *tmp = Logger::getCurrentLogger();
 	if ( tmp != NULL ) {
 		Logger::setCurrentLogger(NULL);
