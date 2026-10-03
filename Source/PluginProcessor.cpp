@@ -397,6 +397,20 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
         case 0xb0 : {
             int ctrl = buf[1];
             int value = buf[2];
+            // Un CC appris (clic droit, « Map controller ») passe AVANT les CC fixes : sur un nanoKONTROL2 les
+            // curseurs 2, 3, 5 et 6 envoient CC 1, 2, 4 et 5 (molette, souffle, pédale, portamento) et ne
+            // pouvaient jamais être appris. Un CC non appris garde son rôle d'origine.
+            {
+                int channel_cc = (channel << 8) | ctrl;
+                if ( ctrl != 64 && ctrl != 120 && ctrl != 123 && mappedMidiCC.contains(channel_cc) ) {
+                    mappedMidiCC[channel_cc]->publishValueAsync((float) value / 127);
+                    lastCCUsed.setValue(channel_cc);
+                    return;
+                }
+                // la fenêtre d'apprentissage doit aussi voir les CC fixes, sinon elle attend sans fin
+                if ( ctrl == 1 || ctrl == 2 || ctrl == 4 || ctrl == 5 || ctrl == 65 )
+                    lastCCUsed.setValue(channel_cc);
+            }
                 switch(ctrl) {
                 case 1:
                     controllers.modwheel_cc = value;
